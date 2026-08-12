@@ -19,7 +19,11 @@ function formatTime(milliseconds: number) {
 
 export function TimerWorkspace() {
   const queryClient = useQueryClient();
-  const { data: scramble, isFetching, isError } = useQuery({
+  const {
+    data: scramble,
+    isFetching,
+    isError,
+  } = useQuery({
     queryKey: scrambleQueryKey,
     queryFn: fetchScramble,
   });
@@ -52,7 +56,12 @@ export function TimerWorkspace() {
     setElapsed(finalTime);
     setRunning(false);
     setSolves((current) => [
-      { id: crypto.randomUUID(), mode, milliseconds: finalTime, scramble: scramble?.notation ?? "" },
+      {
+        id: crypto.randomUUID(),
+        mode,
+        milliseconds: finalTime,
+        scramble: scramble?.notation ?? "",
+      },
       ...current,
     ]);
     void queryClient.invalidateQueries({ queryKey: scrambleQueryKey });
@@ -101,8 +110,12 @@ export function TimerWorkspace() {
 
       <div className="timer-card">
         <div className="scramble-row">
-          <p>{isError ? "取得エラー" : scramble?.notation ?? "生成中…"}</p>
-          <button disabled={isFetching || running} onClick={() => void nextScramble()} type="button">
+          <p>{isError ? "取得エラー" : (scramble?.notation ?? "生成中…")}</p>
+          <button
+            disabled={isFetching || running}
+            onClick={() => void nextScramble()}
+            type="button"
+          >
             {isFetching ? "…" : "次へ"}
           </button>
         </div>
@@ -116,7 +129,11 @@ export function TimerWorkspace() {
         <div>
           <p className="eyebrow">SESSION SIGNAL</p>
           <h2>読みの傾向</h2>
-          <p>{solves.length ? "モード別の平均を比較できます。" : "各モードを計測すると傾向が表示されます。"}</p>
+          <p>
+            {solves.length
+              ? "モード別の平均を比較できます。"
+              : "各モードを計測すると傾向が表示されます。"}
+          </p>
         </div>
         <div className="stats-grid">
           {averages.map((item) => (

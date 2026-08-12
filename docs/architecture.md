@@ -54,10 +54,10 @@ docs/                    設計・調査メモ
 ## Cloudflare 方針
 
 - `wrangler.jsonc` の互換日付を定期的に更新し、`nodejs_compat` を有効にする。
-- バインディング型は `npm run cf-typegen` で生成し、手書きしない。
+- バインディング型は `vp run cf-typegen` で生成し、手書きしない。
 - 秘密情報はソースや Wrangler の vars に置かず、Secrets を利用する。
 - D1 / R2 導入時は REST 経由ではなく Workers bindings を使う。
-- `npm run preview` を CI に含め、Next.js 開発サーバーだけでなく Workers ランタイムでも検証する。
+- `vp run preview` を CI に含め、Next.js 開発サーバーだけでなく Workers ランタイムでも検証する。
 
 ## 未採用のもの
 

@@ -4,15 +4,17 @@
 
 ## 開発
 
-Node.js 22 以上を使用します（最新 Wrangler の実行要件）。
+Nix development shellがNode.js 24、pnpm、Vite+を提供します。
 
 ```bash
-npm install
+nix develop
+vp install
 cp .dev.vars.example .dev.vars
-npm run dev
+vp run dev
 ```
 
-Cloudflare Workers ランタイムでの確認は `npm run preview`、デプロイは `npm run deploy` を使います。
+静的検査は `vp check`、自動修正は `vp check --fix`を使います。Cloudflare Workers
+ランタイムでの確認は`vp run preview`、デプロイは`vp run deploy`を使います。
 
 ## 現在の範囲
 

@@ -8,3 +8,6 @@ cloudflare-env.d.ts
 *.log
 *.tsbuildinfo
 .DS_Store
+
+.direnv/
+.pnpm-store/

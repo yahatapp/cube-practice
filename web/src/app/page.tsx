@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { TimerWorkspace } from "@/features/timer/components/timer-workspace";
-import { createWebScramble } from "@/features/scramble/create-web-scramble";
-import { scrambleQueryKey } from "@/features/scramble/scramble-query";
+import TimerWorkspace from "@/features/timer/components/TimerWorkspace";
+import { createWebScramble } from "@/features/scramble/createWebScramble";
+import { scrambleQueryKey } from "@/features/scramble/scrambleQuery";
 
 export const dynamic = "force-dynamic";
 

@@ -3,7 +3,7 @@ export {
   DEFAULT_SCRAMBLE_LENGTH,
   generateScrambleMoves,
   SCRAMBLE_LENGTH_VARIATION,
-} from "./create-scramble.ts";
+} from "./createScramble.ts";
 export type {
   CreateScrambleOptions,
   Scramble,

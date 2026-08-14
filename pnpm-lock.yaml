@@ -26,7 +26,7 @@ importers:
 
   packages/scramble: {}
 
-  packages/timer-domain: {}
+  packages/timerDomain: {}
 
   web:
     dependencies:
@@ -35,7 +35,7 @@ importers:
         version: link:../packages/scramble
       '@cube-practice/timer-domain':
         specifier: workspace:*
-        version: link:../packages/timer-domain
+        version: link:../packages/timerDomain
       '@tanstack/react-query':
         specifier: 5.101.4
         version: 5.101.4(react@19.2.7)

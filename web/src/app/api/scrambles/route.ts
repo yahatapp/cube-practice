@@ -1,4 +1,4 @@
-import { createWebScramble } from "@/features/scramble/create-web-scramble";
+import { createWebScramble } from "@/features/scramble/createWebScramble";
 
 export async function GET() {
   return Response.json(createWebScramble(), {

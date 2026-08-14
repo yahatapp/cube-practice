@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Providers } from "@/app/providers";
-import { ServiceWorkerRegistration } from "@/features/pwa/service-worker-registration";
+import Providers from "@/app/Providers";
+import ServiceWorkerRegistration from "@/features/pwa/ServiceWorkerRegistration";
 import "./globals.css";
 
 export const metadata: Metadata = {

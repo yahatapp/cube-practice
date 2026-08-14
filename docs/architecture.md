@@ -29,7 +29,7 @@ web/                            Next.js Web/PWAプロジェクト
   src/features/                 Web固有の機能UIとプラットフォームadapter
   public/                       Service Workerと静的ヘッダー
 packages/scramble/              Web・Expo共通のスクランブルドメイン
-packages/timer-domain/          Web・Expo共通のSolve型、時間表示、統計
+packages/timerDomain/           Web・Expo共通のSolve型、時間表示、統計
 docs/                           設計・調査メモ
 ```
 

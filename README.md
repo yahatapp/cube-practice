@@ -22,7 +22,7 @@ vp run dev
 - `web/src`を使ったNext.js App Router + React Server Components
 - pnpm workspaceによるWeb・共有ドメイン分離
 - `packages/scramble`のプラットフォーム非依存スクランブル生成
-- `packages/timer-domain`の共通Solve型・時間表示・統計計算
+- `packages/timerDomain`の共通Solve型・時間表示・統計計算
 - Route Handlerで20〜22手の3×3スクランブル生成
 - TanStack QueryのRSC prefetch / hydrationとクライアント再取得
 - Space長押し・タップ操作に対応したタイマー

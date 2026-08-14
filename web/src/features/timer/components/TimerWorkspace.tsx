@@ -8,11 +8,11 @@ import {
   type TimerState,
 } from "@cube-practice/timer-domain";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchScramble, scrambleQueryKey } from "@/features/scramble/scramble-query";
+import { fetchScramble, scrambleQueryKey } from "@/features/scramble/scrambleQuery";
 
 const STORAGE_KEY = "cube-practice:solves:v1";
 
-export function TimerWorkspace() {
+export default function TimerWorkspace() {
   const queryClient = useQueryClient();
   const {
     data: scramble,

@@ -1,38 +1,24 @@
 {
   "name": "cube-practice",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "check": "vp check",
+    "dev": "pnpm --filter @cube-practice/web dev",
+    "build": "pnpm --filter @cube-practice/web build",
+    "start": "pnpm --filter @cube-practice/web start",
+    "check": "vp check .",
     "format": "vp fmt . --write",
-    "format:check": "vp fmt --check",
-    "lint": "vp lint",
-    "typecheck": "vp check --no-fmt --no-lint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "5.101.4",
-    "next": "^16.3.0",
-    "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "format:check": "vp fmt . --check",
+    "lint": "vp lint . --deny-warnings",
+    "test": "pnpm --recursive test",
+    "typecheck": "vp check --no-fmt --no-lint .",
+    "preview": "pnpm --filter @cube-practice/web preview",
+    "deploy": "pnpm --filter @cube-practice/web deploy",
+    "upload": "pnpm --filter @cube-practice/web upload",
+    "cf-typegen": "pnpm --filter @cube-practice/web cf-typegen"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "1.20.2",
-    "@tailwindcss/postcss": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "tailwindcss": "latest",
-    "typescript": "6.0.3",
     "vite": "catalog:",
-    "vite-plus": "catalog:",
-    "wrangler": "latest"
+    "vite-plus": "catalog:"
   },
   "engines": {
     "node": ">=22.0.0"

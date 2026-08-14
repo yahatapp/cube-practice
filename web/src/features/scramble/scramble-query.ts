@@ -1,4 +1,4 @@
-import type { Scramble } from "@/lib/cube/scramble";
+import type { Scramble } from "@cube-practice/scramble";
 
 export const scrambleQueryKey = ["scramble", "333"] as const;
 

@@ -1,11 +1,6 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Cube Practice workspace
 
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
-
-After every edit, verify the page still works at runtime using the next-dev-loop Skill.
+- `web/` is the Next.js application. Follow `web/AGENTS.md` for all work in that package.
+- `packages/` contains platform-independent TypeScript shared by the web application and future native clients. Shared packages must not depend on React, Next.js, DOM APIs, Node.js-only APIs, or storage implementations.
+- Run workspace commands from the repository root with pnpm. Use `pnpm check` for the complete static verification suite.
+- After every edit to the Next.js application, verify the page at runtime using the next-dev-loop Skill.

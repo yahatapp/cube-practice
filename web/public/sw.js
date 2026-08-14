@@ -1,4 +1,4 @@
-const CACHE_NAME = "cube-practice-v1";
+const CACHE_NAME = "cube-practice-v2";
 const APP_SHELL = ["/", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

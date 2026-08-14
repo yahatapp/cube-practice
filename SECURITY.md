@@ -16,10 +16,10 @@ check, and prevent force pushes and branch deletion. An approving review is opti
 while the repository has a sole maintainer. Enable secret scanning with push
 protection where available.
 
-Restrict the `production` environment to `main`. A manual self-approval can be used as
-an additional deployment confirmation, but it is not a substitute for the required
-CI checks.
+Configure Vercel's Production Branch as `main`. Production deployments must originate
+from protected `main`; preview deployments are used to verify pull requests before
+merge.
 
 GitHub Actions use read-only default permissions and immutable commit SHAs. Runtime
-credentials must be stored in GitHub environment secrets or Cloudflare secrets, never
-in source files or workflow YAML.
+credentials must be stored in Vercel Environment Variables, never in source files,
+local environment files, or workflow YAML.

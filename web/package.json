@@ -5,11 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "start": "next start"
   },
   "dependencies": {
     "@cube-practice/scramble": "workspace:*",
@@ -20,13 +16,11 @@
     "react-dom": "19.2.7"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "1.20.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "tailwindcss": "^4",
-    "typescript": "6.0.3",
-    "wrangler": "latest"
+    "typescript": "6.0.3"
   }
 }

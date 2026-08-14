@@ -15,11 +15,7 @@
     "hooks:install": "lefthook install",
     "lint": "vp lint . --deny-warnings",
     "test": "pnpm --recursive test",
-    "typecheck": "vp check --no-fmt --no-lint .",
-    "preview": "pnpm --filter @cube-practice/web preview",
-    "deploy": "pnpm --filter @cube-practice/web deploy",
-    "upload": "pnpm --filter @cube-practice/web upload",
-    "cf-typegen": "pnpm --filter @cube-practice/web cf-typegen"
+    "typecheck": "vp check --no-fmt --no-lint ."
   },
   "devDependencies": {
     "lefthook": "2.1.10",
@@ -29,5 +25,5 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@11.20.0"
+  "packageManager": "pnpm@10.33.0"
 }

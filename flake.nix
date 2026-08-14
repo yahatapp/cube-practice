@@ -55,7 +55,7 @@
               git
               gnugrep
               nodejs_24
-              pnpm
+              pnpm_10
               vitePlus
             ];
           };

@@ -15,15 +15,9 @@ pre-commit:
         - ".env.*"
         - "**/.env"
         - "**/.env.*"
-        - ".dev.vars"
-        - ".dev.vars.*"
-        - "**/.dev.vars"
-        - "**/.dev.vars.*"
       exclude:
         - ".env.example"
         - "**/.env.example"
-        - ".dev.vars.example"
-        - "**/.dev.vars.example"
       run: echo "Local environment files must not be committed." >&2; exit 1
 
     - name: reject large staged files

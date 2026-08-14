@@ -1,0 +1,4 @@
+title = "Cube Practice secret scanning configuration"
+
+[extend]
+useDefault = true

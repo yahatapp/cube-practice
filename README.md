@@ -17,6 +17,29 @@ vp run dev
 
 ルートのscriptsはworkspace全体の開発入口です。`web/package.json`のscriptsはNext.jsとCloudflareの実行・ビルド・デプロイだけを担当し、lintや型検査の設定は持ちません。通常はリポジトリルートからコマンドを実行してください。Cloudflare Workersランタイムでの確認は`pnpm preview`、デプロイは`pnpm deploy`を使います。
 
+Git hook は依存関係のインストール後に次のコマンドで有効化できます。
+
+```bash
+pnpm run hooks:install
+```
+
+pre-commit では staged secret、コード品質、diff の空白エラー、ローカル環境ファイル、
+500 KiB を超えるファイルを検査します。Codex Cloud では `.codex/setup.sh` が依存関係と
+hook を自動セットアップします。
+
+## CI / CD
+
+Pull request と `main` への push では GitHub Actions が secret scan、静的検査、
+Cloudflare Workers 用 production build、production dependency audit を実行します。
+`main` の検証後は `production` environment を介して Cloudflare Workers へデプロイします。
+
+GitHub の `production` environment に次の secrets を設定してください。
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+
+推奨するリポジトリ保護設定は [`SECURITY.md`](SECURITY.md) に記載しています。
+
 ## 主な機能
 
 - `web/src`を使ったNext.js App Router + React Server Components

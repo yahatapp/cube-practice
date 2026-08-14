@@ -2,99 +2,63 @@
 
 set -euo pipefail
 
-readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-readonly REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
-readonly NIX_FEATURES="nix-command flakes"
-
-load_nix_profile() {
-  local profile
-
-  for profile in \
-    "${HOME}/.nix-profile/etc/profile.d/nix.sh" \
-    "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" \
-    "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
-  do
-    if [[ -r "${profile}" ]]; then
-      # shellcheck disable=SC1090
-      source "${profile}"
-      return 0
-    fi
-  done
-
-  return 1
-}
-
-install_nix() {
-  echo "Nix is not installed; installing it now."
-
-  if [[ "$(id -u)" -eq 0 ]]; then
-    curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
-      https://nixos.org/nix/install \
-      | sh -s -- --daemon --yes
-  else
-    curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
-      https://nixos.org/nix/install \
-      | sh -s -- --no-daemon --yes
-  fi
-
-  load_nix_profile
-}
-
-persist_nix_profile() {
-  local bashrc="${HOME}/.bashrc"
-  local marker="# cube-practice: load Nix"
-
-  if [[ -f "${bashrc}" ]] && grep -Fq "${marker}" "${bashrc}"; then
-    return 0
-  fi
-
-  {
-    printf '\n%s\n' "${marker}"
-    cat <<'EOF'
-if [ -r "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
-  . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-elif [ -r /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-elif [ -r /nix/var/nix/profiles/default/etc/profile.d/nix.sh ]; then
-  . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-fi
-EOF
-  } >> "${bashrc}"
-}
-
+readonly NIX_INSTALLER_VERSION="v3.21.0"
+readonly NIX_INSTALLER_SHA256="c3cf066a28941e89fa1e38ed36f2acfc7479f9b088ddcf35160362a5ee89bd43"
+readonly NIX_INSTALLER_URL="https://install.determinate.systems/nix/tag/${NIX_INSTALLER_VERSION}/nix-installer.sh"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+readonly REPO_ROOT
+readonly NIX_ENV_FILE="${HOME}/.cache/cube-practice-nix-env.sh"
 cd "${REPO_ROOT}"
 
-if ! command -v nix >/dev/null 2>&1; then
-  load_nix_profile || install_nix
+# Nix may already be installed while missing from PATH in a fresh Codex shell.
+if ! command -v nix >/dev/null 2>&1 && [[ -r /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+  # shellcheck disable=SC1091
+  source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
 if ! command -v nix >/dev/null 2>&1; then
-  echo "Nix installation completed, but the nix command is unavailable." >&2
-  exit 1
+  if [[ "$(uname -s)" != "Linux" || "$(id -u)" -ne 0 ]]; then
+    echo "Automatic Nix installation is supported only in the root Linux environment used by Codex Cloud." >&2
+    echo "Install Nix for this host, then run this setup script again." >&2
+    exit 1
+  fi
+
+  NIX_INSTALLER="$(mktemp)"
+  readonly NIX_INSTALLER
+  trap 'rm -f "${NIX_INSTALLER}"' EXIT
+
+  echo "Nix was not found; installing it with installer ${NIX_INSTALLER_VERSION} for Codex Cloud."
+  curl --proto '=https' --tlsv1.2 -fsSL "${NIX_INSTALLER_URL}" -o "${NIX_INSTALLER}"
+  printf '%s  %s\n' "${NIX_INSTALLER_SHA256}" "${NIX_INSTALLER}" | sha256sum -c -
+  bash "${NIX_INSTALLER}" install linux \
+    --no-confirm \
+    --prefer-upstream-nix \
+    --diagnostic-endpoint "" \
+    --init none \
+    --extra-conf "experimental-features = nix-command flakes" \
+    --extra-conf "sandbox = false"
+
+  # shellcheck disable=SC1091
+  source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
-persist_nix_profile
+# Use the same locked toolchain as local development and GitHub Actions.
+nix develop --no-update-lock-file --command pnpm install --frozen-lockfile
+nix develop --no-update-lock-file --command pnpm run hooks:install
+nix develop --no-update-lock-file --command pnpm run guard:betterleaks-canary
 
-if [[ ! -f flake.nix || ! -f flake.lock ]]; then
-  echo "flake.nix and flake.lock are required at ${REPO_ROOT}." >&2
-  exit 1
-fi
+# Setup and later Codex commands run in separate shells, so persist the evaluated
+# development environment for subsequent commands.
+mkdir -p "$(dirname "${NIX_ENV_FILE}")"
+nix print-dev-env > "${NIX_ENV_FILE}"
+chmod 0600 "${NIX_ENV_FILE}"
 
-echo "Validating the locked Nix development environment."
-nix --extra-experimental-features "${NIX_FEATURES}" \
-  flake check --no-update-lock-file --no-build
+touch "${HOME}/.bashrc"
+readonly SOURCE_LINE="source \"${NIX_ENV_FILE}\""
+grep -qxF "${SOURCE_LINE}" "${HOME}/.bashrc" || printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.bashrc"
 
-echo "Installing project dependencies inside the Nix development environment."
-nix --extra-experimental-features "${NIX_FEATURES}" \
-  develop --no-update-lock-file --command bash -euo pipefail -c '
-    printf "Node.js: %s\n" "$(node --version)"
-    printf "pnpm: %s\n" "$(pnpm --version)"
-
-    if [[ -f pnpm-lock.yaml ]]; then
-      pnpm install --frozen-lockfile
-    else
-      pnpm install --no-frozen-lockfile
-    fi
-  '
-
-echo "Codex Cloud setup completed successfully."
+echo "Codex Cloud setup complete."
+nix develop --no-update-lock-file --command node --version
+nix develop --no-update-lock-file --command pnpm --version
+nix develop --no-update-lock-file --command betterleaks --version
+nix develop --no-update-lock-file --command vp --version

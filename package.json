@@ -10,7 +10,6 @@
     "format:check": "vp fmt . --check",
     "guard:betterleaks-canary": "./scripts/check-betterleaks-canary.sh",
     "guard:changes": "./scripts/guard-changes.sh",
-    "guard:secrets": "betterleaks dir --no-banner --redact .",
     "guard:secrets:ci": "./scripts/check-secrets-ci.sh",
     "guard:tracked-files": "./scripts/check-tracked-files.sh",
     "hooks:install": "lefthook install",

@@ -2,18 +2,3 @@ title = "Cube Practice secret scanning configuration"
 
 [extend]
 useDefault = true
-
-[[allowlists]]
-description = "Local-only secrets and generated dependency or build directories"
-paths = [
-  '''(^|/)\.dev\.vars$''',
-  '''(^|/)\.env$''',
-  '''(^|/)\.env\.(development|production|test|local)(\.local)?$''',
-  '''(^|/)\.direnv/''',
-  '''(^|/)\.git/''',
-  '''(^|/)\.next/''',
-  '''(^|/)\.open-next/''',
-  '''(^|/)\.pnpm-store/''',
-  '''(^|/)\.wrangler/''',
-  '''(^|/)node_modules/''',
-]

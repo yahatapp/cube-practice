@@ -3,6 +3,7 @@ node_modules/
 .open-next/
 .wrangler/
 cloudflare-env.d.ts
+next-env.d.ts
 .dev.vars*
 !.dev.vars.example
 *.log
@@ -11,3 +12,8 @@ cloudflare-env.d.ts
 
 .direnv/
 .pnpm-store/
+
+coverage/
+out/
+build/
+.vercel/

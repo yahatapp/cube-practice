@@ -12,24 +12,28 @@
 - React built-ins: タイマーなど画面内だけの状態は `useState` / `useReducer` で持つ。共有状態が複雑になるまで Zustand 等は追加しない。
 - Tailwind CSS 4: デザイントークンとレスポンシブ UI の基盤。現段階では小さなグローバル CSS に集約する。
 - PWA: manifest と最小 Service Worker を用意する。オフライン時はアプリシェルを表示できるが、完全なオフライン計測・同期は次段階。
+- pnpm workspace: Next.js Webアプリと、将来のExpoアプリから利用する共有ドメインを分離する。
 
 ## データフロー
 
-1. `app/page.tsx`（Server Component）が最初のスクランブルを生成し、TanStack Query のキャッシュとして dehydrated state を渡す。
+1. `web/src/app/page.tsx`（Server Component）が最初のスクランブルを生成し、TanStack Queryのキャッシュとしてdehydrated stateを渡す。
 2. `TimerWorkspace`（Client Component）がそのキャッシュを即時表示する。
 3. 次のスクランブルは `GET /api/scrambles`（Route Handler）から取得する。
-4. 計測中の状態と履歴は現段階ではクライアントメモリのみ。永続化導入時に D1 へ置き換える。
+4. 計測中の状態はクライアントに置き、履歴は端末のLocal Storageへ保存する。将来はプラットフォーム別Repositoryを介してIndexedDB、SQLite、D1同期へ拡張する。
 
 ## ディレクトリ
 
 ```text
-app/                    ルート、RSC、Route Handlers、PWA metadata
-components/             インタラクティブな Client Components
-lib/cube/                キューブ領域ロジック（UI 非依存）
-lib/queries/             TanStack Query の query key / fetcher
-public/                  Service Worker と静的ヘッダー
-docs/                    設計・調査メモ
+web/                            Next.js Web/PWAプロジェクト
+  src/app/                      ルート、RSC、Route Handlers、metadata
+  src/features/                 Web固有の機能UIとプラットフォームadapter
+  public/                       Service Workerと静的ヘッダー
+packages/scramble/              Web・Expo共通のスクランブルドメイン
+packages/timerDomain/           Web・Expo共通のSolve型、時間表示、統計
+docs/                           設計・調査メモ
 ```
+
+`packages/`はReact、Next.js、DOM、Node.js専用API、永続化実装へ依存しない。乱数、UUID、時刻、ストレージなどのプラットフォーム機能は各アプリのadapterから注入する。将来Expoを追加する場合は`mobile/`をworkspaceへ追加し、同じ共有パッケージを利用する。
 
 ## 段階的ロードマップ
 
@@ -54,10 +58,10 @@ docs/                    設計・調査メモ
 ## Cloudflare 方針
 
 - `wrangler.jsonc` の互換日付を定期的に更新し、`nodejs_compat` を有効にする。
-- バインディング型は `vp run cf-typegen` で生成し、手書きしない。
+- バインディング型は`pnpm cf-typegen`で生成し、手書きしない。
 - 秘密情報はソースや Wrangler の vars に置かず、Secrets を利用する。
 - D1 / R2 導入時は REST 経由ではなく Workers bindings を使う。
-- `vp run preview` を CI に含め、Next.js 開発サーバーだけでなく Workers ランタイムでも検証する。
+- `pnpm preview`をCIに含め、Next.js開発サーバーだけでなくWorkersランタイムでも検証する。
 
 ## 未採用のもの
 

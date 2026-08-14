@@ -4,9 +4,16 @@ export default defineConfig({
   lint: {
     plugins: ["import", "jsx-a11y", "nextjs", "oxc", "react", "typescript", "unicorn"],
     categories: {
-      correctness: "warn",
+      correctness: "error",
     },
-    ignorePatterns: [".next/**", ".open-next/**", "cloudflare-env.d.ts", "next-env.d.ts", "out/**"],
+    ignorePatterns: [
+      "web/.next/**",
+      "web/.open-next/**",
+      "web/.wrangler/**",
+      "web/cloudflare-env.d.ts",
+      "web/next-env.d.ts",
+      "web/out/**",
+    ],
     options: {
       typeAware: true,
       typeCheck: true,

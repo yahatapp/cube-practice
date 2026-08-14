@@ -1,0 +1,30 @@
+pre-commit:
+  jobs:
+    - name: detect staged secrets
+      run: betterleaks git . --pre-commit --staged --no-banner --redact
+
+    - name: check staged source
+      run: vp staged --hide-unstaged
+
+    - name: check staged diff
+      run: git diff --cached --check
+
+    - name: reject local environment files
+      glob:
+        - ".env"
+        - ".env.*"
+        - "**/.env"
+        - "**/.env.*"
+        - ".dev.vars"
+        - ".dev.vars.*"
+        - "**/.dev.vars"
+        - "**/.dev.vars.*"
+      exclude:
+        - ".env.example"
+        - "**/.env.example"
+        - ".dev.vars.example"
+        - "**/.dev.vars.example"
+      run: echo "Local environment files must not be committed." >&2; exit 1
+
+    - name: reject large staged files
+      run: ./scripts/check-staged-files.sh

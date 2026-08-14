@@ -48,7 +48,12 @@
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
+              bashInteractive
+              betterleaks
+              coreutils
+              curl
               git
+              gnugrep
               nodejs_24
               pnpm
               vitePlus

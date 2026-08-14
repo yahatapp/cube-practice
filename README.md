@@ -9,13 +9,14 @@
 ```bash
 nix develop
 vp install
-cp web/.dev.vars.example web/.dev.vars
 vp run dev
 ```
 
 ルートから`pnpm dev`でWebアプリを起動できます。品質管理はVite+へ統一しており、静的検査（format・lint・型検査）は`pnpm check`、個別実行は`pnpm format`、`pnpm lint`、`pnpm typecheck`を使います。共有ドメインのテストは`pnpm test`です。
 
-ルートのscriptsはworkspace全体の開発入口です。`web/package.json`のscriptsはNext.jsとCloudflareの実行・ビルド・デプロイだけを担当し、lintや型検査の設定は持ちません。通常はリポジトリルートからコマンドを実行してください。Cloudflare Workersランタイムでの確認は`pnpm preview`、デプロイは`pnpm deploy`を使います。
+ルートのscriptsはworkspace全体の開発入口です。`web/package.json`のscriptsはNext.jsの開発・ビルド・起動だけを担当し、lintや型検査の設定は持ちません。通常はリポジトリルートからコマンドを実行してください。
+
+現在、ローカル開発に必須の環境変数はありません。今後追加する場合はローカルでは`web/.env.local`、本番とPreview DeploymentではVercelのEnvironment Variablesを使います。
 
 Git hook は依存関係のインストール後に次のコマンドで有効化できます。
 
@@ -30,13 +31,9 @@ hook を自動セットアップします。
 ## CI / CD
 
 Pull request と `main` への push では GitHub Actions が secret scan、静的検査、
-Cloudflare Workers 用 production build、production dependency audit を実行します。
-`main` の検証後は `production` environment を介して Cloudflare Workers へデプロイします。
+Next.js production build、production dependency audit を実行します。
 
-GitHub の `production` environment に次の secrets を設定してください。
-
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_TOKEN`
+デプロイはVercelのGit連携が担当します。Pull requestと`main`以外のブランチにはPreview Deploymentが作成され、`main`へのpushはProduction Deploymentとして公開されます。Vercel側ではRoot Directoryを`web`に設定し、workspace packagesをビルドへ含めるため「Include source files outside of the Root Directory」を有効にしてください。
 
 推奨するリポジトリ保護設定は [`SECURITY.md`](SECURITY.md) に記載しています。
 

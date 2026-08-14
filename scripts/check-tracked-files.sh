@@ -8,9 +8,9 @@ while IFS= read -r -d '' path; do
   basename="${path##*/}"
 
   case "${basename}" in
-    .env.example | .dev.vars.example)
+    .env.example)
       ;;
-    .env | .env.* | .dev.vars | .dev.vars.*)
+    .env | .env.*)
       printf 'Local environment file must not be tracked: %s\n' "${path}" >&2
       has_forbidden_file=true
       ;;

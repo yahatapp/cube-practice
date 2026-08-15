@@ -12,15 +12,15 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#111318",
+  themeColor: "#09090b",
   colorScheme: "dark",
   viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ja">
-      <body>
+    <html className="scheme-dark bg-zinc-950" lang="ja">
+      <body className="min-h-dvh bg-gradient-to-b from-indigo-950/40 via-zinc-950 to-zinc-950 font-sans text-zinc-200 antialiased">
         <Providers>{children}</Providers>
         <ServiceWorkerRegistration />
       </body>

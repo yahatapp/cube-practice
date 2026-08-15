@@ -130,30 +130,48 @@ export default function TimerWorkspace() {
         ? "離してスタート"
         : "Spaceを長押し、またはタップしてスタート";
 
+  const timerFaceStateClass =
+    timerState === "ready"
+      ? "text-emerald-400 bg-emerald-400/5"
+      : timerState === "running"
+        ? "text-indigo-200"
+        : "text-zinc-200";
+
+  const instructionDotStateClass =
+    timerState === "ready"
+      ? "bg-emerald-400 ring-4 ring-emerald-400/10"
+      : timerState === "running"
+        ? "bg-indigo-200 animate-pulse motion-reduce:animate-none"
+        : "bg-zinc-500";
+
   return (
-    <section className="workspace" aria-label="3×3×3 タイマー">
-      <div className="top-bar">
-        <div className="brand-mark" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
+    <section className="grid gap-5" aria-label="3×3×3 タイマー">
+      <div className="flex min-h-13 items-center gap-3 px-1">
+        <div
+          className="grid size-10 -rotate-3 grid-cols-2 gap-0.5 rounded-xl bg-indigo-900 p-2"
+          aria-hidden="true"
+        >
+          <span className="rounded-sm bg-indigo-200" />
+          <span className="rounded-sm bg-rose-300" />
+          <span className="rounded-sm bg-amber-300" />
+          <span className="rounded-sm bg-emerald-400" />
         </div>
-        <div>
-          <strong>3×3×3</strong>
-          <span>WCA TIMER</span>
+        <div className="grid gap-0.5">
+          <strong className="text-base">3×3×3</strong>
+          <span className="text-xs font-bold tracking-widest text-zinc-300">WCA TIMER</span>
         </div>
-        <div className="solve-count">
-          <strong>{solves.length}</strong>
-          <span>solves</span>
+        <div className="ml-auto grid gap-0 text-right">
+          <strong className="text-lg tabular-nums">{solves.length}</strong>
+          <span className="text-xs font-bold tracking-widest text-zinc-300">solves</span>
         </div>
       </div>
 
-      <div className={`timer-card state-${timerState}`}>
-        <div className="scramble-area">
-          <div className="scramble-heading">
-            <span>SCRAMBLE</span>
+      <div className="overflow-hidden rounded-3xl border border-zinc-700 bg-zinc-900 shadow-2xl">
+        <div className="border-b border-zinc-700 px-6 py-5 max-sm:px-4">
+          <div className="mb-5 flex items-center justify-between">
+            <span className="text-xs font-extrabold tracking-widest text-indigo-200">SCRAMBLE</span>
             <button
+              className="min-h-10 cursor-pointer rounded-full bg-indigo-200/10 px-4 py-2 text-indigo-200 transition-colors hover:bg-indigo-200/20 disabled:cursor-default disabled:opacity-50"
               aria-label="次のスクランブル"
               disabled={isFetching || timerState === "running"}
               onClick={() => void nextScramble()}
@@ -162,60 +180,89 @@ export default function TimerWorkspace() {
               <span aria-hidden="true">↻</span> 次へ
             </button>
           </div>
-          <p>{isError ? "スクランブルを取得できません" : (scramble?.notation ?? "生成中…")}</p>
+          <p className="mx-auto max-w-4xl text-center font-mono text-base font-semibold leading-loose tracking-wide text-zinc-200 sm:text-xl">
+            {isError ? "スクランブルを取得できません" : (scramble?.notation ?? "生成中…")}
+          </p>
         </div>
 
         <button
           aria-label={instruction}
-          className="timer-face"
+          className={`grid min-h-75 w-full cursor-pointer select-none place-content-center border-0 bg-transparent px-4 py-8 transition-colors duration-200 ease-in-out touch-none hover:bg-white/5 max-sm:min-h-68 md:min-h-90 ${timerFaceStateClass}`}
           onClick={() => (timerState === "running" ? stopTimer() : startTimer())}
           type="button"
         >
-          <span className="timer-value">{formatTime(elapsed)}</span>
-          <span className="timer-instruction">
-            <i aria-hidden="true" />
+          <span className="block text-center text-8xl font-medium leading-none tracking-tighter tabular-nums sm:text-9xl">
+            {formatTime(elapsed)}
+          </span>
+          <span className="mt-6 flex items-center justify-center gap-2.5 text-center text-sm font-semibold leading-relaxed tracking-wide text-zinc-300 max-sm:mx-auto max-sm:max-w-60">
+            <i
+              className={`size-2 shrink-0 rounded-full ${instructionDotStateClass}`}
+              aria-hidden="true"
+            />
             {instruction}
           </span>
         </button>
       </div>
 
-      <section className="stats-section" aria-labelledby="stats-heading">
-        <div className="section-heading">
+      <section
+        className="overflow-visible rounded-3xl border border-zinc-700 bg-zinc-900 p-4 shadow-2xl sm:p-6 md:p-7"
+        aria-labelledby="stats-heading"
+      >
+        <div className="mb-5 flex items-end justify-between">
           <div>
-            <span>SESSION</span>
-            <h2 id="stats-heading">記録と統計</h2>
+            <span className="text-xs font-extrabold tracking-widest text-indigo-200">SESSION</span>
+            <h2 className="mt-1 text-2xl tracking-tight" id="stats-heading">
+              記録と統計
+            </h2>
           </div>
-          <span className="storage-note">この端末に自動保存</span>
+          <span className="text-xs text-zinc-300">この端末に自動保存</span>
         </div>
-        <div className="stat-grid">
+        <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
           {stats.map((item) => (
-            <article key={item.label}>
-              <span>{item.label}</span>
-              <strong>{item.value === null ? "—" : formatTime(item.value)}</strong>
-              {item.label.startsWith("Ao") && <small>best / worst 除外</small>}
+            <article className="min-w-0 rounded-2xl bg-zinc-800 p-4" key={item.label}>
+              <span className="block text-xs font-bold text-zinc-300">{item.label}</span>
+              <strong className="mt-2 block text-2xl font-semibold tabular-nums sm:text-3xl">
+                {item.value === null ? "—" : formatTime(item.value)}
+              </strong>
+              {item.label.startsWith("Ao") && (
+                <small className="mt-1 block min-h-4 text-xs text-zinc-500">
+                  best / worst 除外
+                </small>
+              )}
             </article>
           ))}
         </div>
 
-        <div className="history">
-          <div className="history-head">
-            <span>#</span>
-            <span>タイム</span>
-            <span>スクランブル</span>
-            <span />
+        <div className="mt-5 overflow-hidden rounded-2xl border border-zinc-700">
+          <div className="flex min-h-9 items-center gap-2 bg-black/10 px-3 text-xs uppercase tracking-widest text-zinc-500 max-sm:px-2">
+            <span className="w-8 shrink-0">#</span>
+            <span className="w-20 shrink-0">タイム</span>
+            <span className="min-w-0 flex-1">スクランブル</span>
+            <span className="w-8 shrink-0" />
           </div>
           {solves.length === 0 ? (
-            <div className="empty-state">
+            <div className="grid min-h-32 place-items-center border-t border-zinc-700 text-center">
               <strong>最初のソルブを始めましょう</strong>
-              <span>記録はここに追加されます</span>
+              <span className="-mt-9 text-xs text-zinc-500">記録はここに追加されます</span>
             </div>
           ) : (
             solves.slice(0, 100).map((solve, index) => (
-              <div className="solve-row" key={solve.id}>
-                <span>{solves.length - index}</span>
-                <strong>{formatTime(solve.milliseconds, true)}</strong>
-                <span title={solve.scramble}>{solve.scramble}</span>
+              <div
+                className="flex min-h-14 items-center gap-2 border-t border-zinc-700 px-3 max-sm:px-2"
+                key={solve.id}
+              >
+                <span className="w-8 shrink-0 text-xs text-zinc-500">{solves.length - index}</span>
+                <strong className="w-20 shrink-0 tabular-nums">
+                  {formatTime(solve.milliseconds, true)}
+                </strong>
+                <span
+                  className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-mono text-xs text-zinc-300"
+                  title={solve.scramble}
+                >
+                  {solve.scramble}
+                </span>
                 <button
+                  className="size-8 shrink-0 cursor-pointer rounded-full border-0 bg-transparent text-zinc-500 transition-colors hover:bg-red-300/10 hover:text-red-300"
                   aria-label={`${formatTime(solve.milliseconds)}の記録を削除`}
                   onClick={() => removeSolve(solve.id)}
                   type="button"

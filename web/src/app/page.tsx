@@ -13,7 +13,7 @@ export default async function HomePage() {
   });
 
   return (
-    <main className="shell">
+    <main className="mx-auto w-full max-w-5xl px-3.5 py-5 pb-10 max-sm:px-2.5 md:pt-8">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <TimerWorkspace />
       </HydrationBoundary>

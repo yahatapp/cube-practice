@@ -6,9 +6,8 @@
 
 ## 技術選定
 
-- Next.js 16.3 / React 19.2: App Router、React Server Components、Route Handlers を利用する。
-- Vercel: Next.jsのネイティブ実行環境とGit連携を使い、SSR、React Server Components、Route Handlersを追加アダプターなしで配置する。
-- TanStack Query 5: API 由来のサーバー状態を取得・キャッシュする。画面遷移そのものは Next.js App Router が担当する。
+- Next.js 16.3 / React 19.2: App Routerを静的exportし、ブラウザで動作するSPAとして利用する。
+- Cloudflare Workers Static Assets: `out/`をグローバル配信し、リクエスト時のWorker実行を必要としない構成にする。
 - React built-ins: タイマーなど画面内だけの状態は `useState` / `useReducer` で持つ。共有状態が複雑になるまで Zustand 等は追加しない。
 - Tailwind CSS 4: デザイントークンとレスポンシブ UI の基盤。現段階では小さなグローバル CSS に集約する。
 - PWA: manifest と最小 Service Worker を用意する。オフライン時はアプリシェルを表示できるが、完全なオフライン計測・同期は次段階。
@@ -16,16 +15,15 @@
 
 ## データフロー
 
-1. `web/src/app/page.tsx`（Server Component）が最初のスクランブルを生成し、TanStack Queryのキャッシュとしてdehydrated stateを渡す。
-2. `TimerWorkspace`（Client Component）がそのキャッシュを即時表示する。
-3. 次のスクランブルは `GET /api/scrambles`（Route Handler）から取得する。
-4. 計測中の状態はクライアントに置き、履歴は端末のLocal Storageへ保存する。将来はプラットフォーム別Repositoryを介してIndexedDB、SQLite、マネージドデータベース同期へ拡張する。
+1. Next.jsがビルド時にページシェルを`out/`へ静的生成する。
+2. `TimerWorkspace`（Client Component）がWeb Crypto APIでスクランブルを生成する。
+3. 計測中の状態はクライアントに置き、履歴は端末のLocal Storageへ保存する。将来はプラットフォーム別Repositoryを介してIndexedDB、SQLite、D1同期へ拡張する。
 
 ## ディレクトリ
 
 ```text
 web/                            Next.js Web/PWAプロジェクト
-  src/app/                      ルート、RSC、Route Handlers、metadata
+  src/app/                      静的ルート、layout、metadata
   src/features/                 Web固有の機能UIとプラットフォームadapter
   public/                       Service Workerと静的ヘッダー
 packages/scramble/              Web・Expo共通のスクランブルドメイン
@@ -45,7 +43,7 @@ docs/                           設計・調査メモ
 
 ### Phase 2: 読みの分析
 
-- マネージドデータベースに任意同期し、端末をまたいだ履歴とバックアップを提供する
+- D1に任意同期し、端末をまたいだ履歴とバックアップを提供する
 - 通常 / X-Cross / F2L #1 の差、成功率、停止時間を可視化する
 - 「F2L #1 読みが弱い」など、十分な標本数がある場合だけ示唆を出す
 
@@ -55,16 +53,17 @@ docs/                           設計・調査メモ
 - Cross + F2L 第1ペア探索を別 Worker / Web Worker に隔離する
 - 手順テキストの段階再生を先に実装し、需要を確認してから Three.js を遅延ロードする
 
-## Vercel 方針
+## Cloudflare 方針
 
-- VercelのGit連携を使い、Pull requestにはPreview Deployment、`main`へのpushにはProduction Deploymentを作成する。
-- VercelプロジェクトのRoot Directoryは`web`とし、Root Directory外のworkspace packagesをビルド対象に含める。
-- 秘密情報はソースやローカル環境ファイルへ置かず、VercelのEnvironment Variablesを利用する。
-- 永続化サービスはVercel Functionsから利用できる標準的なAPIまたはドライバーを持つものを選び、`packages/`からはプラットフォーム別adapterを介して利用する。
-- CIでは`pnpm build`を実行し、Vercel固有の変換処理に依存しないNext.js production buildを検証する。
+- `output: "export"`で生成した`web/out/`をWorkers Static Assetsとして配信する。
+- 現段階ではWorkerスクリプトとOpenNextを使わず、静的アセットへのリクエストだけでアプリを提供する。
+- Pull requestでは`CI` workflowだけを実行し、`main`へのマージ後は独立した`Deploy` workflowからGitHubの`production` environmentを介してデプロイする。
+- 秘密情報はSPAへ含めない。Cloudflareのデプロイ資格情報はGitHub environment secretsに保存する。
+- D1同期などのサーバー機能が必要になった場合は、静的アプリと分離したAPI Workerを追加し、`packages/`からはプラットフォーム別adapterを介して利用する。
+- CIでは静的exportに加えて`wrangler deploy --dry-run`を実行し、配備設定と成果物を検証する。
 
 ## 未採用のもの
 
 - 3D キューブ: 初期ロードと実装コストに対して、タイマー中心の価値検証には不要。
-- cubejs / min2phase.js: ライセンス、バンドルサイズ、サーバーランタイム / Web Worker 互換性を確認してから採用する。
+- cubejs / min2phase.js: ライセンス、バンドルサイズ、ブラウザ / Web Worker 互換性を確認してから採用する。
 - Zustand / Redux Toolkit: 現在の状態はコンポーネント内に閉じており、導入理由がまだない。

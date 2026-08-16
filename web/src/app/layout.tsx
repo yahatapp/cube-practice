@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import Providers from "@/app/Providers";
 import ServiceWorkerRegistration from "@/features/pwa/ServiceWorkerRegistration";
 import "./globals.css";
 
@@ -21,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html className="scheme-dark bg-zinc-950" lang="ja">
       <body className="min-h-dvh bg-gradient-to-b from-indigo-950/40 via-zinc-950 to-zinc-950 font-sans text-zinc-200 antialiased">
-        <Providers>{children}</Providers>
+        {children}
         <ServiceWorkerRegistration />
       </body>
     </html>

@@ -3,8 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [main]
-  push:
-    branches: [main]
 
 permissions:
   contents: read
@@ -51,8 +49,11 @@ jobs:
       - name: Run tests
         run: nix develop --no-update-lock-file --command pnpm test
 
-      - name: Build Next.js application
+      - name: Build static application
         run: nix develop --no-update-lock-file --command pnpm run build
+
+      - name: Validate Cloudflare deployment
+        run: nix develop --no-update-lock-file --command pnpm --filter @cube-practice/web exec wrangler deploy --dry-run
 
       - name: Audit production dependencies
         run: nix develop --no-update-lock-file --command pnpm audit --prod --audit-level moderate

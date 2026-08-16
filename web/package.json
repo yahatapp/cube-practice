@@ -5,12 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "preview": "pnpm build && wrangler dev",
+    "deploy": "pnpm build && pnpm deploy:built",
+    "deploy:built": "wrangler deploy",
+    "deploy:dry-run": "pnpm build && wrangler deploy --dry-run"
   },
   "dependencies": {
     "@cube-practice/scramble": "workspace:*",
     "@cube-practice/timer-domain": "workspace:*",
-    "@tanstack/react-query": "5.101.4",
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -21,6 +23,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "tailwindcss": "^4",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "wrangler": "^4.123.0"
   }
 }

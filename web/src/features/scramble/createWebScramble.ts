@@ -1,5 +1,3 @@
-import "server-only";
-
 import { createScramble, type Scramble } from "@cube-practice/scramble";
 
 function randomInt(maxExclusive: number): number {

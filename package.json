@@ -4,7 +4,10 @@
   "scripts": {
     "dev": "pnpm --filter @cube-practice/web dev",
     "build": "pnpm --filter @cube-practice/web build",
-    "start": "pnpm --filter @cube-practice/web start",
+    "preview": "pnpm --filter @cube-practice/web preview",
+    "deploy": "pnpm --filter @cube-practice/web deploy",
+    "deploy:built": "pnpm --filter @cube-practice/web deploy:built",
+    "deploy:dry-run": "pnpm --filter @cube-practice/web deploy:dry-run",
     "check": "vp check .",
     "format": "vp fmt . --write",
     "format:check": "vp fmt . --check",

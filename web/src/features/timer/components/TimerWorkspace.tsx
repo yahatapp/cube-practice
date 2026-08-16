@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Scramble } from "@cube-practice/scramble";
 import {
   calculateStats,
   formatTime,
@@ -8,25 +8,23 @@ import {
   type TimerState,
 } from "@cube-practice/timer-domain";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchScramble, scrambleQueryKey } from "@/features/scramble/scrambleQuery";
+import { createWebScramble } from "@/features/scramble/createWebScramble";
 
 const STORAGE_KEY = "cube-practice:solves:v1";
 
 export default function TimerWorkspace() {
-  const queryClient = useQueryClient();
-  const {
-    data: scramble,
-    isFetching,
-    isError,
-  } = useQuery({
-    queryKey: scrambleQueryKey,
-    queryFn: fetchScramble,
-  });
+  const [scramble, setScramble] = useState<Scramble | null>(null);
   const [timerState, setTimerState] = useState<TimerState>("idle");
   const [elapsed, setElapsed] = useState(0);
   const [solves, setSolves] = useState<Solve[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const startedAt = useRef(0);
+
+  useEffect(() => {
+    // Generate after hydration so the exported HTML and first client render stay identical.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setScramble(createWebScramble());
+  }, []);
 
   useEffect(() => {
     try {
@@ -56,11 +54,11 @@ export default function TimerWorkspace() {
   }, [timerState]);
 
   const startTimer = useCallback(() => {
-    if (!scramble || isFetching) return;
+    if (!scramble) return;
     setElapsed(0);
     startedAt.current = performance.now();
     setTimerState("running");
-  }, [isFetching, scramble]);
+  }, [scramble]);
 
   const stopTimer = useCallback(() => {
     if (timerState !== "running") return;
@@ -76,8 +74,8 @@ export default function TimerWorkspace() {
       },
       ...current,
     ]);
-    void queryClient.invalidateQueries({ queryKey: scrambleQueryKey });
-  }, [queryClient, scramble?.notation, timerState]);
+    setScramble(createWebScramble());
+  }, [scramble?.notation, timerState]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -115,8 +113,8 @@ export default function TimerWorkspace() {
     ];
   }, [solves]);
 
-  async function nextScramble() {
-    await queryClient.invalidateQueries({ queryKey: scrambleQueryKey });
+  function nextScramble() {
+    setScramble(createWebScramble());
   }
 
   function removeSolve(id: string) {
@@ -173,15 +171,15 @@ export default function TimerWorkspace() {
             <button
               className="min-h-10 cursor-pointer rounded-full bg-indigo-200/10 px-4 py-2 text-indigo-200 transition-colors hover:bg-indigo-200/20 disabled:cursor-default disabled:opacity-50"
               aria-label="次のスクランブル"
-              disabled={isFetching || timerState === "running"}
-              onClick={() => void nextScramble()}
+              disabled={!scramble || timerState === "running"}
+              onClick={nextScramble}
               type="button"
             >
               <span aria-hidden="true">↻</span> 次へ
             </button>
           </div>
           <p className="mx-auto max-w-4xl text-center font-mono text-base font-semibold leading-loose tracking-wide text-zinc-200 sm:text-xl">
-            {isError ? "スクランブルを取得できません" : (scramble?.notation ?? "生成中…")}
+            {scramble?.notation ?? "生成中…"}
           </p>
         </div>
 

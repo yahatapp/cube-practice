@@ -24,6 +24,6 @@
     "@types/react-dom": "latest",
     "tailwindcss": "^4",
     "typescript": "7.0.2",
-    "wrangler": "^4.123.0"
+    "wrangler": "^4.127.0"
   }
 }

@@ -13,7 +13,7 @@
   "dependencies": {
     "@cube-practice/scramble": "workspace:*",
     "@cube-practice/timer-domain": "workspace:*",
-    "next": "16.3.8",
+    "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },

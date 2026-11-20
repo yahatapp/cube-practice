@@ -17,15 +17,15 @@
         system:
         let
           pkgs = import nixpkgs { inherit system; };
-          vitePlusVersion = "0.2.8";
+          vitePlusVersion = "1.3.0";
           vitePlusRelease = {
             aarch64-darwin = {
               target = "aarch64-apple-darwin";
-              hash = "sha256-GjQ2NIq1gnFnMtKT1RGrm3D1xzBpUf5PpvbIrHThHmI=";
+              hash = "sha256-TwIac9Z1/8eKx3NZ/9QNiaYvJirHViXl4P1WciES+Dg=";
             };
             x86_64-linux = {
               target = "x86_64-unknown-linux-gnu";
-              hash = "sha256-gC9ahf/YsFwTvDXtOpc30V8bU0Orow1r4N52HReIif8=";
+              hash = "sha256-P7OmaEcuExLu3XWYs/bFEazrwvZJfCk6XuBOuiSO7n4=";
             };
           }.${system};
           vitePlus = pkgs.stdenvNoCC.mkDerivation {

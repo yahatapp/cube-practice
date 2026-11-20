@@ -6,7 +6,7 @@
 
 ## 技術選定
 
-- Next.js 16.3 / React 19.2: App Routerを静的exportし、ブラウザで動作するSPAとして利用する。
+- Next.js 16.4 / React 19.3: App Routerを静的exportし、ブラウザで動作するSPAとして利用する。
 - Cloudflare Workers Static Assets: `out/`をグローバル配信し、リクエスト時のWorker実行を必要としない構成にする。
 - React built-ins: タイマーなど画面内だけの状態は `useState` / `useReducer` で持つ。共有状態が複雑になるまで Zustand 等は追加しない。
 - Tailwind CSS 4: デザイントークンとレスポンシブ UI の基盤。現段階では小さなグローバル CSS に集約する。
